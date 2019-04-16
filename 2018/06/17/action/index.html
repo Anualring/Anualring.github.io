@@ -10,11 +10,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="google" content="notranslate">
     <meta name="keywords" content="Annualring,"> 
-    <meta name="description" content="
-
-
-行为识别两大流派：(1)Two-Stream     (2)C3D
-Two-Stream流派思想：利用视频帧图像(spatial)和根据帧图像提取到的光流场图像(temporal flow)，,"> 
+    <meta name="description" content="行为识别两大流派：(1)Two-Stream     (2)C3D
+Two-Stream流派思想：利用视频帧图像(spatial)和根据帧图像提取到的光流场图像(temporal flow)，各自训,"> 
     <meta name="author" content="忆亿亿光年"> 
     <link rel="alternative" href="atom.xml" title="AnnualRing&#39;blog" type="application/atom+xml"> 
     <link rel="icon" href="/img/favicon.png"> 
@@ -66,10 +63,7 @@ Two-Stream流派思想：利用视频帧图像(spatial)和根据帧图像提取�
 
         </div>
         <div class="content markdown">
-            <p class="description"></p>
-
-<a id="more"></a>
-<p>行为识别两大流派：(1)Two-Stream     (2)C3D<br><img src="https://upload-images.jianshu.io/upload_images/5806342-8a4133bac606e921.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Two-Stream"></p>
+            <p>行为识别两大流派：(1)Two-Stream     (2)C3D<br><img src="https://upload-images.jianshu.io/upload_images/5806342-8a4133bac606e921.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Two-Stream"></p>
 <h2 id="Two-Stream流派思想："><a href="#Two-Stream流派思想：" class="headerlink" title="Two-Stream流派思想："></a>Two-Stream流派思想：</h2><p>利用<strong>视频帧图像(spatial)和根据帧图像提取到的光流场图像(temporal flow)</strong>，各自训练出一个模型，在网络产生结果后，对网络做一个<strong>融合(Fusion)</strong>。这两个模型分别表示<strong>静态信息和短时序信息</strong>。它能有效解决从一张图就可以识别出行为的类别。</p>
 <blockquote>
 <p>光流是什么？<br>光流能通过速度提供物体的<strong>远近信息</strong>，远处似静止，近处似脱兔。此外，还能提供<strong>角度信息</strong>，与眼睛呈90°的物体运动最快，角度小到0°的时候感受不到它的运动。</p>

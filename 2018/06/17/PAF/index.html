@@ -10,11 +10,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="google" content="notranslate">
     <meta name="keywords" content="Annualring,"> 
-    <meta name="description" content="
-
-
-一.姿态估计一般方法自上而下：就是先检测包含行人的框，即human proposal，然后对框中的人进行姿态估计。
-自下而上：先检测keypoints，然后根据热力图、点与点之间连接的概率，根,"> 
+    <meta name="description" content="一.姿态估计一般方法自上而下：就是先检测包含行人的框，即human proposal，然后对框中的人进行姿态估计。
+自下而上：先检测keypoints，然后根据热力图、点与点之间连接的概率，根据图论,"> 
     <meta name="author" content="忆亿亿光年"> 
     <link rel="alternative" href="atom.xml" title="AnnualRing&#39;blog" type="application/atom+xml"> 
     <link rel="icon" href="/img/favicon.png"> 
@@ -66,10 +63,7 @@
 
         </div>
         <div class="content markdown">
-            <p class="description"></p>
-
-<a id="more"></a>
-<h2 id="一-姿态估计一般方法"><a href="#一-姿态估计一般方法" class="headerlink" title="一.姿态估计一般方法"></a>一.姿态估计一般方法</h2><p><strong>自上而下</strong>：就是先检测包含行人的框，即human proposal，然后对框中的人进行姿态估计。</p>
+            <h2 id="一-姿态估计一般方法"><a href="#一-姿态估计一般方法" class="headerlink" title="一.姿态估计一般方法"></a>一.姿态估计一般方法</h2><p><strong>自上而下</strong>：就是先检测包含行人的框，即human proposal，然后对框中的人进行姿态估计。</p>
 <p><strong>自下而上</strong>：先检测keypoints，然后根据热力图、点与点之间连接的概率，根据图论知识，基于PAF等将关键点连接起来，再将关键点分组到人。</p>
 <p>本文提出了一种利用Part Affinity Fields（PAFs）的自下而上的人体状态估计算法。这种方法的好处是先得到关键点位置再获得骨架的方法不会随着图像中的人数增加而增加，随着人数的增加，他的计算时间基本不变。</p>
 <h2 id="二-核心思想"><a href="#二-核心思想" class="headerlink" title="二.核心思想"></a>二.核心思想</h2><p><strong>1，使用置信图进行关节检测</strong></p>
