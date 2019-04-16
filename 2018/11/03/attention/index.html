@@ -1,0 +1,207 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hans" class="loading">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>注意力机制 - AnnualRing&#39;blog</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate">
+    <meta name="keywords" content="Annualring,"> 
+    <meta name="description" content="
+
+
+1.1 注意力机制主要用来解决哪些问题神经网络中的端到端（end-to-end）输入输出模型，比如在机器翻译模型中，把输入X编码为一个固定长度的隐向量Z，然后网络基于隐向量Z解码出目标输出Y。,"> 
+    <meta name="author" content="忆亿亿光年"> 
+    <link rel="alternative" href="atom.xml" title="AnnualRing&#39;blog" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <link rel="stylesheet" href="/css/diaspora.css">
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({
+              google_ad_client: "ca-pub-8691406134231910",
+              enable_page_level_ads: true
+         });
+    </script>
+    <script async custom-element="amp-auto-ads" src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+    </script>
+</head>
+</html>
+<body class="loading">
+    <span id="config-title" style="display:none">AnnualRing&#39;blog</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;" data-url="https://annualring.top"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">注意力机制</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+
+    <div class="section">
+        <div class="article">
+    <div class="main">
+        <h1 class="title">注意力机制</h1>
+        <div class="stuff">
+            <span>十一月 03, 2018</span>
+            
+  <ul class="post-tags-list"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/attention/">attention</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <p class="description"></p>
+
+<a id="more"></a>
+<h2 id="1-1-注意力机制主要用来解决哪些问题"><a href="#1-1-注意力机制主要用来解决哪些问题" class="headerlink" title="1.1 注意力机制主要用来解决哪些问题"></a>1.1 注意力机制主要用来解决哪些问题</h2><p>神经网络中的端到端（end-to-end）输入输出模型，比如在机器翻译模型中，把输入X编码为一个固定长度的隐向量Z，然后网络基于隐向量Z解码出目标输出Y。这是非常典型的序列到序列模型，可是存在<strong>两个明显的问题</strong>：</p>
+<blockquote>
+<p>Que1：把输入X的所有信息压缩到一个固定长度的隐向量Z，忽略了输入X的长度，当输入句子长度长度很长时，不相关的信息大量增加，模型性能下降</p>
+<p>Que2：把输入X编码成一个固定长度大小，对句子中每个词都赋予<strong>相同的权重</strong>，这样做的坏处是没有区分度，模型性能下降</p>
+<p>同样，在图像领域，卷积神经网络CNN对输入图像每个区域做<strong>相同的处理</strong>，这样做也是没有区分度的，特别是图像尺寸非常大时，问题更加明显</p>
+</blockquote>
+<h2 id="1-2-原理"><a href="#1-2-原理" class="headerlink" title="1.2 原理"></a>1.2 原理</h2><h3 id="1-2-1-编解码框架-起源"><a href="#1-2-1-编解码框架-起源" class="headerlink" title="1.2.1 编解码框架(起源)"></a>1.2.1 编解码框架(起源)</h3><p>再谈注意力机制原理之前，要先谈<strong>Encoder-Decoder框架</strong>，因为目前大多数注意力模型是附着在Encoder-Decoder框架下的。但是要注意，注意力模型本身<strong>不依赖</strong>于任何特定的框架，它可以看做是一种<strong>通用思想</strong>，我的理解是：思想——关注重要的特征，抑制不重要的特征。最终方法——控制权值系数。</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79ly1fz1lli2dk6j30jy0b60t2.jpg" alt="图1 文本处理领域Encoder-Decoder框架"></p>
+<p>因为注意力模型主要用于文本处理领域，而且这方面的文章比较多，因此先从文本处理领域讲解注意力机制的流程思想。图一是文本处理领域的一个最原始、抽象的一个编解码模型。</p>
+<p>文本处理领域的Encoder-Decoder框架可以直观的去理解为：它是可以处理由一个句子（或文章）输出另一个句子（或文章）的通用处理模型。</p>
+<p>对于句子对&lt;Source,Target&gt;，我们的目标是给定输入源句子Source，通过Encoder-Decoder框架生成目标句子Target。</p>
+<p><img src="https://ws2.sinaimg.cn/large/006tNc79ly1fz1lmg00k9j305t01fwe9.jpg" alt="p-3"></p>
+<p><strong>Encoder</strong>顾名思义就是对输入句子<strong>Source</strong>进行编码，将句子通过<strong>非线性函数</strong>转换为中间语义表示C：</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNc79ly1fz1lmuey26j305k00s0sh.jpg" alt></p>
+<p><strong>Decoder</strong>的任务是根据Source的中间语义C和之前生成的y1,y2,…y(i-1)来生成i时刻的的单词yi：</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNc79ly1fz1ln46wbxj305s00s0sh.jpg" alt></p>
+<p>每个yi都是这么依次产生。整个系统看上去就是就是根据输入句子<strong>Source</strong>生成目标句子<strong>Target</strong>。</p>
+<h3 id="1-2-2-软注意力模型-分身"><a href="#1-2-2-软注意力模型-分身" class="headerlink" title="1.2.2 软注意力模型(分身)"></a>1.2.2 软注意力模型(分身)</h3><p>前面一节讲的是注意力模型的起源，本节讲的是注意力模型最常见的一个分身<strong>Soft Attention</strong>（不同的应用场景下，软注意力模型的设计也是不一样的，但是本质上软注意模型都是可微的，可以通过反向传播得到），因为它是最常见也是应用最多的注意力模型。下面以机器翻译作为案例，讲解最常见的软注意力模型。最后抛离Encoder-decoder框架，抽象出注意力机制的本质思想。</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79ly1fz1lp5npohj30if05v74f.jpg" alt="2018-11-02-p"></p>
+<p>上面这张图是Encoder-Decoder框架，它并没有体现出“注意力模型”，所以它可以看做是一个注意力不集中的“分心模型”。说它是分心模型是因为它的目标句子Target中每一个单词的生成都使用同一个语义编码C，如下公式：</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79ly1fz1lootyt2j304l029mwx.jpg" alt="2018-11-02-073627"></p>
+<p>f表示Decoder的非线性变换函数。从上面公式看，生成目标句子的单词时，不论生成哪个单词，它们使用的输入句子Source语义编码C都是一样的，无任何区别。</p>
+<p>语义编码C是由句子Source的每个单词经过Encoder编码产生的，这意味着无论生成哪个单词y1,y2,…，句子Source中的每个单词对生成目标单词yi来说<strong>影响力</strong>是相同的，就像是人类看到眼前的画面，眼神中却没有焦点。</p>
+<p>那么该如何找到兴趣点，并聚焦在兴趣点上呢？</p>
+<p>举个例子，机器翻译一句话：Tom chase Jerry ，这在Encoder-Decoder框架中，逐步生成的中文单词：”汤姆”，”追逐”，”杰瑞”。</p>
+<p>在翻译”汤姆”这个单词时，分心模型中每个单词对生成”汤姆”这个词的贡献是一样的，很明显这是不合理的，显然”Tom”对翻译成”汤姆”更重要，但分心模型无法体现出这一点，而目前的神经网络大多是这种分心模型，这也是引入注意力模型的重要原因。</p>
+<p>在上面的例子中，引入注意力模型的话，在翻译”汤姆”的时候，不同的英文单词对生成当前的中文单词时的影响力是不同的，比如给出类似下面一个概率分布：</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNc79ly1fz1ls3vij2g307g00i3y9.gif" alt="2018-11-02-CodeCogsEqn"></p>
+<p><strong>目标句子单词都应该学会分配其对应源句子单词的注意力概率信息</strong>，也就是说，在生成每个单词yi时，之前都是相同的中间语义表示C会被替换成根据当前生成单词而不断变化的Ci。<strong>理解注意力模型的关键就在这儿，即由固定的中间语义表示C换成了由当前输出单词来调整成加入注意力模型变化的Ci</strong>，增加注意力模型的Encoder-Decoder框架理解起来如下图所示：</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79ly1fz1lpsm5uuj30jy0b60t2.jpg" alt="2018-11-02-p-5"></p>
+<p>生成目标句子单词的过程成为下面的形式：</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79ly1fz1lq0xnqhj30590270si.jpg" alt="2018-11-02-p-3"></p>
+<p><strong>每个Ci对应着不同的源句子单词的注意力分配概率分布</strong>：</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79ly1fz1lq7hh46j30dw03tjrb.jpg" alt="2018-11-02-p-4"></p>
+<p>f2函数表示Encoder对输入英文单词的某种变化函数，是对输入句子中每个单词的<strong>语义编码</strong>。g表示Encoder根据单词的中间表示生成整个句子中间语义表示的变换函数，一般做法是g函数对构成元素加权求和。Ci的形成过程类似下图：</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79ly1fz1lqj8sv2j30a809uaaa.jpg" alt="2018-11-03-011323"></p>
+<h3 id="1-2-3-Attention本质思想"><a href="#1-2-3-Attention本质思想" class="headerlink" title="1.2.3 Attention本质思想"></a>1.2.3 Attention本质思想</h3><p>把Attention机制从上述例子中的Encoder-Decoder框架中剥离，进一步抽象，看懂Attention机制的本质思想。</p>
+<p><img src="https://ws3.sinaimg.cn/large/006tNc79ly1fz1lqpa5lmj30kn08uq34.jpg" alt="2018-11-03-011348"></p>
+<p>如上图所示，将Source源中构成元素看做一系列&lt;Key,Value&gt;数据对构成，此时给定Target中的某个元素Query，<strong>通过计算Query和各个Key的相关性，得到每个Key对应Value的权重系数</strong>，然后再对Value进行加权求和，得出最终的Attention的数值。</p>
+<p>所以本质上Attention机制是对Source中的每一个Value值进行加权求和，而Query和Key用来计算对应Value的权重系数。本质思想如下公式：</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79ly1fz1lqxaiuxj30ie018t8j.jpg" alt="2018-11-03-015936"></p>
+<p>其中，Lx=||Source||代表Source的长度，在上述机器翻译的例子中，Key与Valuei合二为一，都用Source中的语义编码表示（不容易看出来）。</p>
+<p><strong>但是，从概念上来理解，Attention仍然理解为从大量信息中有选择的筛选出少量重要的信息，并聚焦到这些重要的信息中</strong>。聚焦的过程体现在权重系数上的计算，权重越大越聚焦其对应的Value值上，权重代表了信息的重要性，Value是其对应的信息。</p>
+<h3 id="1-2-4-计算流程"><a href="#1-2-4-计算流程" class="headerlink" title="1.2.4 计算流程"></a>1.2.4 计算流程</h3><p>对目前大多数方法进行抽象归纳为两个过程：</p>
+<ol>
+<li>根据Query和Key计算权重系数。这个过程又可细分两个阶段，第一个阶段计算Query与Key计算两者的相似性；第二个阶段对第一个阶段原始分值归一化处理。</li>
+<li>根据根据权重系数对Value进行加权求和。</li>
+</ol>
+<p><img src="https://ws2.sinaimg.cn/large/006tNc79ly1fz1lr4dikyj30fs0dy3z7.jpg" alt="2018-11-03-142703"></p>
+<p>第一个阶段，可以引入不同的函数和计算机制，根据Query和某个Keyi，计算两者的相似性。方法可以是：两者的向量点积、求两者向量<a href="https://zh.wikipedia.org/wiki/%E4%BD%99%E5%BC%A6%E7%9B%B8%E4%BC%BC%E6%80%A7" target="_blank" rel="noopener">Cosine相似性</a>、引入额外的神经网络来求值，如下式所示：</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNc79ly1fz1lrag3faj30er033749.jpg" alt="2018-11-03-144830"></p>
+<p>由于第一阶段产生分值使用不同的方法，其取值范围也会不一样。所以第二阶段引入类似Softmax函数对第一阶段的分值进行数值转换，一方面进行归一化，形成权重和为1的概率分布，另一方面还可以通过Softmax内在机制突出重要元素的权重。</p>
+<p><img src="https://ws4.sinaimg.cn/large/006tNc79ly1fz1lrg1wj1j308r01ljr6.jpg" alt="2018-11-03-145557"></p>
+<p>第二阶段的计算结果ai是ValueI对应的权重系数，对它们进行加权求和得到最后的Attention值：</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNc79ly1fz1lrpf0tlj30c3012mwy.jpg" alt="2018-11-03-145806"></p>
+<p>通过以上三个阶段的计算，即可求出Query对应的注意力值，这是目前大多数具体的注意力机制计算过程。</p>
+<p>待续。</p>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="true">
+                <source type="audio/mpeg" src="http://link.hhtjim.com/163/4875306.mp3">
+            </audio>
+            
+        </div>
+        
+    <div id="gitalk-container" class="comment link" data-ae="true" data-ci="a7bda31026fbce8f09b1" data-cs="493b9d4a6864642efe79e15d0985cdf7e8eacccd" data-r="annualrings.github.io" data-o="annualrings" data-a="annualrings" data-d="false">查看评论</div>
+
+
+    </div>
+    
+</div>
+
+
+    </div>
+</div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","model":{"scale":1.3,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":150,"height":300,"position":"right","hOffset":150,"vOffset":-35},"mobile":{"show":true,"scale":0.1},"react":{"opacityDefault":0.7,"opacityOnHover":0.2},"log":false,"tagMode":false});</script></body>
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+</html>

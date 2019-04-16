@@ -1,0 +1,219 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hans" class="loading">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KMP算法 - AnnualRing&#39;blog</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate">
+    <meta name="keywords" content="Annualring,"> 
+    <meta name="description" content="本文摘自阮一峰的文章，感谢大佬分享。
+字符串匹配一. 什么是字符串匹配？举例说明：有一个字符串“BBC ABCDAB ABCDABCDABDE”，我想知道它里面是否包含字符串“ABCDABD”，这就,"> 
+    <meta name="author" content="忆亿亿光年"> 
+    <link rel="alternative" href="atom.xml" title="AnnualRing&#39;blog" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <link rel="stylesheet" href="/css/diaspora.css">
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({
+              google_ad_client: "ca-pub-8691406134231910",
+              enable_page_level_ads: true
+         });
+    </script>
+    <script async custom-element="amp-auto-ads" src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+    </script>
+</head>
+</html>
+<body class="loading">
+    <span id="config-title" style="display:none">AnnualRing&#39;blog</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;" data-url="https://annualring.top"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">KMP算法</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+
+    <div class="section">
+        <div class="article">
+    <div class="main">
+        <h1 class="title">KMP算法</h1>
+        <div class="stuff">
+            <span>九月 07, 2018</span>
+            
+  <ul class="post-tags-list"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/KMP/">KMP</a></li><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/数据结构/">数据结构</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <p>本文摘自阮一峰的文章，感谢大佬分享。</p>
+<h1 id="字符串匹配"><a href="#字符串匹配" class="headerlink" title="字符串匹配"></a><strong>字符串匹配</strong></h1><h2 id="一-什么是字符串匹配？"><a href="#一-什么是字符串匹配？" class="headerlink" title="一. 什么是字符串匹配？"></a>一. 什么是字符串匹配？</h2><p>举例说明：有一个字符串“BBC ABCDAB ABCDABCDABDE”，我想知道它里面是否包含字符串“ABCDABD”，这就是字符串匹配问题了。</p>
+<h2 id="二-kmp发明者"><a href="#二-kmp发明者" class="headerlink" title="二.kmp发明者"></a>二.kmp发明者</h2><p>KMP算法的名字也是它算法发明者的名字，<a href="https://en.wikipedia.org/wiki/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm" target="_blank" rel="noopener">Knuth-Morris-Pratt</a>。它以三个发明者命名，起头那个K就是著名科学家Donald Knuth。</p>
+<h2 id="三-算法解释"><a href="#三-算法解释" class="headerlink" title="三.算法解释"></a>三.算法解释</h2><p>参考国外大神Jake Boxer的文章。</p>
+<ol>
+<li><p><img src="https://ws3.sinaimg.cn/large/006tNc79ly1fz1lvgazdsj30ge042a9x.jpg" alt="2018-09-07-bg2013050103"></p>
+<p>首先，字符串“BBC ABCDAB ABCDABCDABDE”第一个字符与<strong>搜索词</strong>“ABCDABD”第一个字符进行比较。因为B与A不匹配，所以搜索词后移一位。</p>
+</li>
+<li><p><img src="https://ws3.sinaimg.cn/large/006tNc79ly1fz1lvlvvxfj30gs03tdfp.jpg" alt="2018-09-07-bg2013050104"></p>
+<p>B与A不匹配，搜索词在往后移位。</p>
+</li>
+<li><p><img src="https://ws1.sinaimg.cn/large/006tNc79ly1fz1lvqfkjhj30g103tmx1.jpg" alt="2018-09-07-bg2013050105"></p>
+<p>一直往后移位，直到字符串有字符与搜索词第一个字符相同为止。</p>
+</li>
+<li><p><img src="https://ws4.sinaimg.cn/large/006tNc79ly1fz1lvyfullj30g803ejr9.jpg" alt="2018-09-07-bg2013050106"></p>
+<p>然后再比较搜索词下一个字符和字符串下一个字符是否相同，以此类推，直到完全匹配或者匹配到字符不相同为止。</p>
+</li>
+<li><p><img src="https://ws2.sinaimg.cn/large/006tNc79ly1fz1lw51eb8j30g103ma9x.jpg" alt="2018-09-07-bg2013050107"></p>
+<p>哈哈哈哈哈哈，巧了，这里匹配到最后刚好搜索词最后一个字符和字符串不匹配。</p>
+<p>那该怎么办呢？是像之前那样一位一位的算，还是有别的什么方法？🧐</p>
+<p>要是像之前那样，将搜索词后移一位，再逐个比较，虽然可行，只是效率极差，因为你要把“<strong>搜索位置</strong>”移到之前已经比较过的位置上再比一遍。</p>
+<p>你要学聪明点</p>
+</li>
+<li><p><img src="https://ws3.sinaimg.cn/large/006tNc79ly1fz1lwncz3oj30g103ma9x.jpg" alt="2018-09-07-bg2013050107"></p>
+<p>一个基本事实是，当空格与D不匹配时，你其实知道前面六个字符是“ABCDAB”。KMP算法的想法是，设法利用这个已知的信息，不要把<strong>搜索位置</strong>移回已经比较过的位置上。继续把它向后移(这里的向后移不是简单地向后移噢~)，这样就提高了效率。</p>
+</li>
+<li><p><img src="https://ws1.sinaimg.cn/large/006tNc79ly1fz1lwvary5j30hx059q2w.jpg" alt="2018-09-07-bg2013050109"></p>
+<p>这是一张叫做《部分匹配表》的表格，它是由搜索词而来。</p>
+<p>下面讲一下如何使用它，它是如何产生的待会再介绍。</p>
+</li>
+<li><p><img src="https://ws3.sinaimg.cn/large/006tNc79ly1fz1lxfh7lgj30g103ma9x.jpg" alt="2018-09-07-bg2013050107"></p>
+<p>还是这幅图- -，<strong>由图可知</strong>，空格与D不匹配，前面6个是匹配的。查表可知，最后一个字符B对应的“部分匹配值”为2，因此”搜索词“按照公式计算，向后移动4位：</p>
+<p>移动位数 = 已匹配的的字符数 - 对应的部分匹配值</p>
+<p>因为6-2=4，所以搜索词向后移4位。</p>
+</li>
+<li><p><img src="https://ws2.sinaimg.cn/large/006tNc79ly1fz1lxr62azj30g503tdfp.jpg" alt="2018-09-08-bg2013050110"></p>
+<p>移动完4位后，<em>是否从头开始再逐一匹配呢？或者可不可以直接从第三位开始匹配呢？</em>，空格和C不匹配，由公式得：2-0=2，得到下图：</p>
+</li>
+<li><p><img src="https://ws3.sinaimg.cn/large/006tNc79ly1fz1lxvb9h0j30ft03sglh.jpg" alt="2018-09-08-bg2013050111"></p>
+<p>空格与A不匹配，向后移一位。</p>
+</li>
+<li><p><img src="https://ws3.sinaimg.cn/large/006tNc79ly1fz1ly0d5yij30ge03yjr9.jpg" alt="2018-09-08-bg2013050112"></p>
+<p>逐位比较，C与D不匹配。于是，移动位数6-2=4。</p>
+</li>
+<li><p><img src="https://ws3.sinaimg.cn/large/006tNc79ly1fz1ly5mfaxj30g003r745.jpg" alt="2018-09-08-bg2013050113"></p>
+<p>逐位比较，直到搜索词的最后一位，发现完全匹配，于是搜索完成。</p>
+<p>若还想移动，(找出全部匹配)，移动位数=7-0，再将搜索词向后移动7位。以此类推。</p>
+</li>
+</ol>
+<h2 id="四-部分匹配值表"><a href="#四-部分匹配值表" class="headerlink" title="四.部分匹配值表"></a>四.部分匹配值表</h2><ol>
+<li><p><img src="https://ws4.sinaimg.cn/large/006tNc79ly1fz1lyk6xpbj30fb05mweg.jpg" alt="2018-09-08-142526"></p>
+<p>介绍部分匹配表如何产生的前需要了解两个概念：前缀  后缀 </p>
+<p>前缀：除了最后一个字符以外，一个字符串的全部头部组合</p>
+<p>后缀：除了第一个字符以外，一个字符串的全部尾部组合</p>
+</li>
+<li><p><img src="https://ws4.sinaimg.cn/large/006tNc79ly1fz1lyppfctj30hx059q2w.jpg" alt="2018-09-08-144857"></p>
+<p>部分匹配值就是：</p>
+<blockquote>
+<p>前缀和后缀的最长共有元素长度~~~~！</p>
+</blockquote>
+<p><strong>A</strong>的前缀和后缀都为空集，共有元素的长度为0；</p>
+<p><strong>AB</strong>的前缀为{A}，后缀为{B}，共有元素的长度为0；</p>
+<p><strong>ABC</strong>的前缀为{A，AB}，后缀为{C，BC}，共有元素的长度为0；</p>
+<p><strong>ABCD</strong>的前缀为{A，AB，ABC}，后缀为{D，CD，BCD}，共有元素的长度为0；</p>
+<p><strong>ABCDA</strong>的前缀为{A，AB，ABC，ABCD}，后缀为{A，DA，CDA，BCDA}，共有元素的长度为1；</p>
+<p><strong>ABCDAB</strong>的前缀为{A，AB，ABC，ABCD，ABCDA}，后缀为{B，AB，DAB，CDAB，BCDAB}，共有元素的长度为2；</p>
+<p><strong>ABCDABD</strong>的前缀为{A，AB，ABC，ABCD，ABCDA，ABCDAB}，后缀为{D，BD，ABD，DABD，CDABD，BCDABD}共有元素的长度为0；</p>
+<p>PS：共有元素长度为2的时候，6-2=4，向后移4位，然后是否可以从第三位开始逐一比较呢？因为由前面已知存在共有元素，长度为2❓❓</p>
+</li>
+<li><p><img src="https://ws2.sinaimg.cn/large/006tNc79ly1fz1lyz1qi2j30ge03yjr9.jpg" alt="2018-09-09-031156"></p>
+<p>总结：“部分匹配<strong>值</strong>”的实质是，有时候，搜索词的头部和尾部会有重复。比如，“ABCDAB”之中有两个AB，那么他的部分匹配值就是2。然后运用公式，将第一个AB向后移动4位(字符串长度-部分匹配值)，就可以来到第二个“AB”的位置。</p>
+<p>完。</p>
+</li>
+</ol>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="true">
+                <source type="audio/mpeg" src="http://link.hhtjim.com/163/436147067.mp3">
+            </audio>
+            
+        </div>
+        
+    <div id="gitalk-container" class="comment link" data-ae="true" data-ci="a7bda31026fbce8f09b1" data-cs="493b9d4a6864642efe79e15d0985cdf7e8eacccd" data-r="annualrings.github.io" data-o="annualrings" data-a="annualrings" data-d="false">查看评论</div>
+
+
+    </div>
+    
+</div>
+
+
+    </div>
+</div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","model":{"scale":1.3,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/assets/koharu.model.json"},"display":{"superSample":2,"width":150,"height":300,"position":"right","hOffset":150,"vOffset":-35},"mobile":{"show":true,"scale":0.1},"react":{"opacityDefault":0.7,"opacityOnHover":0.2},"log":false,"tagMode":false});</script></body>
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+</html>
