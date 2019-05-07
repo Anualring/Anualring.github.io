@@ -3,7 +3,6 @@
 <html lang="zh-Hans" class="loading">
 <head><meta name="generator" content="Hexo 3.8.0">
     <meta charset="UTF-8">
-    <meta name="referrer" content="no-referrer" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>KMP算法 - AnnualRing&#39;s blog</title>
@@ -69,57 +68,57 @@
 <h2 id="二-kmp发明者"><a href="#二-kmp发明者" class="headerlink" title="二.kmp发明者"></a>二.kmp发明者</h2><p>KMP算法的名字也是它算法发明者的名字，<a href="https://en.wikipedia.org/wiki/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm" target="_blank" rel="noopener">Knuth-Morris-Pratt</a>。它以三个发明者命名，起头那个K就是著名科学家Donald Knuth。</p>
 <h2 id="三-算法解释"><a href="#三-算法解释" class="headerlink" title="三.算法解释"></a>三.算法解释</h2><p>参考国外大神Jake Boxer的文章。</p>
 <ol>
-<li><p><img src="https://ws3.sinaimg.cn/large/006tNc79ly1fz1lvgazdsj30ge042a9x.jpg" alt="2018-09-07-bg2013050103"></p>
+<li><p><img src="http://shuge.oss-cn-beijing.aliyuncs.com/image/006tNc79ly1fz1lvgazdsj30ge042a9x.jpg" alt="2018-09-07-bg2013050103"></p>
 <p>首先，字符串“BBC ABCDAB ABCDABCDABDE”第一个字符与<strong>搜索词</strong>“ABCDABD”第一个字符进行比较。因为B与A不匹配，所以搜索词后移一位。</p>
 </li>
-<li><p><img src="https://ws3.sinaimg.cn/large/006tNc79ly1fz1lvlvvxfj30gs03tdfp.jpg" alt="2018-09-07-bg2013050104"></p>
+<li><p><img src="http://shuge.oss-cn-beijing.aliyuncs.com/image/006tNc79ly1fz1lvlvvxfj30gs03tdfp.jpg" alt="2018-09-07-bg2013050104"></p>
 <p>B与A不匹配，搜索词在往后移位。</p>
 </li>
-<li><p><img src="https://ws1.sinaimg.cn/large/006tNc79ly1fz1lvqfkjhj30g103tmx1.jpg" alt="2018-09-07-bg2013050105"></p>
+<li><p><img src="http://shuge.oss-cn-beijing.aliyuncs.com/image/006tNc79ly1fz1lvqfkjhj30g103tmx1.jpg" alt="2018-09-07-bg2013050105"></p>
 <p>一直往后移位，直到字符串有字符与搜索词第一个字符相同为止。</p>
 </li>
-<li><p><img src="https://ws4.sinaimg.cn/large/006tNc79ly1fz1lvyfullj30g803ejr9.jpg" alt="2018-09-07-bg2013050106"></p>
+<li><p><img src="http://shuge.oss-cn-beijing.aliyuncs.com/image/006tNc79ly1fz1lvyfullj30g803ejr9.jpg" alt="2018-09-07-bg2013050106"></p>
 <p>然后再比较搜索词下一个字符和字符串下一个字符是否相同，以此类推，直到完全匹配或者匹配到字符不相同为止。</p>
 </li>
-<li><p><img src="https://ws2.sinaimg.cn/large/006tNc79ly1fz1lw51eb8j30g103ma9x.jpg" alt="2018-09-07-bg2013050107"></p>
+<li><p><img src="http://shuge.oss-cn-beijing.aliyuncs.com/image/006tNc79ly1fz1lw51eb8j30g103ma9x.jpg" alt="2018-09-07-bg2013050107"></p>
 <p>哈哈哈哈哈哈，巧了，这里匹配到最后刚好搜索词最后一个字符和字符串不匹配。</p>
 <p>那该怎么办呢？是像之前那样一位一位的算，还是有别的什么方法？🧐</p>
 <p>要是像之前那样，将搜索词后移一位，再逐个比较，虽然可行，只是效率极差，因为你要把“<strong>搜索位置</strong>”移到之前已经比较过的位置上再比一遍。</p>
 <p>你要学聪明点</p>
 </li>
-<li><p><img src="https://ws3.sinaimg.cn/large/006tNc79ly1fz1lwncz3oj30g103ma9x.jpg" alt="2018-09-07-bg2013050107"></p>
+<li><p><img src="http://shuge.oss-cn-beijing.aliyuncs.com/image/006tNc79ly1fz1lwncz3oj30g103ma9x.jpg" alt="2018-09-07-bg2013050107"></p>
 <p>一个基本事实是，当空格与D不匹配时，你其实知道前面六个字符是“ABCDAB”。KMP算法的想法是，设法利用这个已知的信息，不要把<strong>搜索位置</strong>移回已经比较过的位置上。继续把它向后移(这里的向后移不是简单地向后移噢~)，这样就提高了效率。</p>
 </li>
-<li><p><img src="https://ws1.sinaimg.cn/large/006tNc79ly1fz1lwvary5j30hx059q2w.jpg" alt="2018-09-07-bg2013050109"></p>
+<li><p><img src="http://shuge.oss-cn-beijing.aliyuncs.com/image/006tNc79ly1fz1lwvary5j30hx059q2w.jpg" alt="2018-09-07-bg2013050109"></p>
 <p>这是一张叫做《部分匹配表》的表格，它是由搜索词而来。</p>
 <p>下面讲一下如何使用它，它是如何产生的待会再介绍。</p>
 </li>
-<li><p><img src="https://ws3.sinaimg.cn/large/006tNc79ly1fz1lxfh7lgj30g103ma9x.jpg" alt="2018-09-07-bg2013050107"></p>
+<li><p><img src="http://shuge.oss-cn-beijing.aliyuncs.com/image/006tNc79ly1fz1lxfh7lgj30g103ma9x.jpg" alt="2018-09-07-bg2013050107"></p>
 <p>还是这幅图- -，<strong>由图可知</strong>，空格与D不匹配，前面6个是匹配的。查表可知，最后一个字符B对应的“部分匹配值”为2，因此”搜索词“按照公式计算，向后移动4位：</p>
 <p>移动位数 = 已匹配的的字符数 - 对应的部分匹配值</p>
 <p>因为6-2=4，所以搜索词向后移4位。</p>
 </li>
-<li><p><img src="https://ws2.sinaimg.cn/large/006tNc79ly1fz1lxr62azj30g503tdfp.jpg" alt="2018-09-08-bg2013050110"></p>
+<li><p><img src="http://shuge.oss-cn-beijing.aliyuncs.com/image/006tNc79ly1fz1lxr62azj30g503tdfp.jpg" alt="2018-09-08-bg2013050110"></p>
 <p>移动完4位后，<em>是否从头开始再逐一匹配呢？或者可不可以直接从第三位开始匹配呢？</em>，空格和C不匹配，由公式得：2-0=2，得到下图：</p>
 </li>
-<li><p><img src="https://ws3.sinaimg.cn/large/006tNc79ly1fz1lxvb9h0j30ft03sglh.jpg" alt="2018-09-08-bg2013050111"></p>
+<li><p><img src="http://shuge.oss-cn-beijing.aliyuncs.com/image/006tNc79ly1fz1lxvb9h0j30ft03sglh.jpg" alt="2018-09-08-bg2013050111"></p>
 <p>空格与A不匹配，向后移一位。</p>
 </li>
-<li><p><img src="https://ws3.sinaimg.cn/large/006tNc79ly1fz1ly0d5yij30ge03yjr9.jpg" alt="2018-09-08-bg2013050112"></p>
+<li><p><img src="http://shuge.oss-cn-beijing.aliyuncs.com/image/006tNc79ly1fz1ly0d5yij30ge03yjr9.jpg" alt="2018-09-08-bg2013050112"></p>
 <p>逐位比较，C与D不匹配。于是，移动位数6-2=4。</p>
 </li>
-<li><p><img src="https://ws3.sinaimg.cn/large/006tNc79ly1fz1ly5mfaxj30g003r745.jpg" alt="2018-09-08-bg2013050113"></p>
+<li><p><img src="http://shuge.oss-cn-beijing.aliyuncs.com/image/006tNc79ly1fz1ly5mfaxj30g003r745.jpg" alt="2018-09-08-bg2013050113"></p>
 <p>逐位比较，直到搜索词的最后一位，发现完全匹配，于是搜索完成。</p>
 <p>若还想移动，(找出全部匹配)，移动位数=7-0，再将搜索词向后移动7位。以此类推。</p>
 </li>
 </ol>
 <h2 id="四-部分匹配值表"><a href="#四-部分匹配值表" class="headerlink" title="四.部分匹配值表"></a>四.部分匹配值表</h2><ol>
-<li><p><img src="https://ws4.sinaimg.cn/large/006tNc79ly1fz1lyk6xpbj30fb05mweg.jpg" alt="2018-09-08-142526"></p>
+<li><p><img src="http://shuge.oss-cn-beijing.aliyuncs.com/image/006tNc79ly1fz1lyk6xpbj30fb05mweg.jpg" alt="2018-09-08-142526"></p>
 <p>介绍部分匹配表如何产生的前需要了解两个概念：前缀  后缀 </p>
 <p>前缀：除了最后一个字符以外，一个字符串的全部头部组合</p>
 <p>后缀：除了第一个字符以外，一个字符串的全部尾部组合</p>
 </li>
-<li><p><img src="https://ws4.sinaimg.cn/large/006tNc79ly1fz1lyppfctj30hx059q2w.jpg" alt="2018-09-08-144857"></p>
+<li><p><img src="http://shuge.oss-cn-beijing.aliyuncs.com/image/006tNc79ly1fz1lyppfctj30hx059q2w.jpg" alt="2018-09-08-144857"></p>
 <p>部分匹配值就是：</p>
 <blockquote>
 <p>前缀和后缀的最长共有元素长度~~~~！</p>
@@ -133,7 +132,7 @@
 <p><strong>ABCDABD</strong>的前缀为{A，AB，ABC，ABCD，ABCDA，ABCDAB}，后缀为{D，BD，ABD，DABD，CDABD，BCDABD}共有元素的长度为0；</p>
 <p>PS：共有元素长度为2的时候，6-2=4，向后移4位，然后是否可以从第三位开始逐一比较呢？因为由前面已知存在共有元素，长度为2❓❓</p>
 </li>
-<li><p><img src="https://ws2.sinaimg.cn/large/006tNc79ly1fz1lyz1qi2j30ge03yjr9.jpg" alt="2018-09-09-031156"></p>
+<li><p><img src="http://shuge.oss-cn-beijing.aliyuncs.com/image/006tNc79ly1fz1lyz1qi2j30ge03yjr9.jpg" alt="2018-09-09-031156"></p>
 <p>总结：“部分匹配<strong>值</strong>”的实质是，有时候，搜索词的头部和尾部会有重复。比如，“ABCDAB”之中有两个AB，那么他的部分匹配值就是2。然后运用公式，将第一个AB向后移动4位(字符串长度-部分匹配值)，就可以来到第二个“AB”的位置。</p>
 <p>完。</p>
 </li>

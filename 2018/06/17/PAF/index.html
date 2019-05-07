@@ -3,7 +3,6 @@
 <html lang="zh-Hans" class="loading">
 <head><meta name="generator" content="Hexo 3.8.0">
     <meta charset="UTF-8">
-    <meta name="referrer" content="no-referrer" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Realtime Multi-person 2D Pose Estimation using PAF - AnnualRing&#39;s blog</title>
@@ -89,7 +88,7 @@
 </li>
 </ol>
 <p>PAFs是用来描述像素点在骨架中的走向，用L(p)表示；关键点的响应用S(p)表示。先看主体网络结构，网络采用VGG network作为骨架，有两个分支分别回归L(p)和S(p)。每一个stage算一次loss，之后把L和S以及原始输入concatenate，继续下一个stage的训练。随着迭代次数的增加，S能够一定程度上区分结构的左右。loss用的L2范数，S和L的ground-truth需要从标注的关键点生成，如果某个关键点在标注中有缺失则不计算该点。</p>
-<p><img src="https://ws4.sinaimg.cn/large/006tNc79ly1fz1m09ko3nj30is0cxacq.jpg" alt="2018-06-30-TIM截图20180423171307"></p>
+<p><img src="http://shuge.oss-cn-beijing.aliyuncs.com/image/006tNc79ly1fz1m09ko3nj30is0cxacq.jpg" alt></p>
 <h2 id="四-获得骨架"><a href="#四-获得骨架" class="headerlink" title="四.获得骨架"></a>四.获得骨架</h2><p>PAFs是用来描述像素点在骨架中的走向，用L表示；关键点的响应用S表示。</p>
 <p>对于S，每一类关键点有一个channel，生成ground-truth的时候按照多个高斯分布区max的方法保留各个点的响应峰值。</p>
 <p>对于L，则复杂一点，先看准定义，对于第k个person的第c个支干上的PAFs：<br>$$<br>L^*_{c,k} = \begin{cases} v, &amp; \text {if p on limb c,k} \ 0, &amp; \text{others} \end{cases}<br>$$</p>
